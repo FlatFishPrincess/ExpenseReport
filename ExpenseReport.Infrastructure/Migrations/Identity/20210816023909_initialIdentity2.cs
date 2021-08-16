@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ExpenseReport.Infrastructure.Migrations
+namespace ExpenseReport.Infrastructure.Migrations.Identity
 {
-    public partial class initial : Migration
+    public partial class initialIdentity2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

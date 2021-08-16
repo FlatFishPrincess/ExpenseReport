@@ -8,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ExpenseReport.Domain.Entities.Expense;
 
 namespace ExpenseReport.Infrastructure.DbContexts
 {
@@ -27,6 +28,11 @@ namespace ExpenseReport.Infrastructure.DbContexts
         public IDbConnection Connection => Database.GetDbConnection();
 
         public bool HasChanges => ChangeTracker.HasChanges();
+
+        public DbSet<Currency> Currencies { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Claim> Claims { get; set; }
+        public DbSet<ClaimItem> ClaimItems { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -64,6 +70,28 @@ namespace ExpenseReport.Infrastructure.DbContexts
                 property.SetColumnType("decimal(18,2)");
             }
             base.OnModelCreating(builder);
+
+            // configures one-to-many relationship
+            builder.Entity<ClaimItem>()
+                .ToTable(nameof(ClaimItem))
+                .HasOne(ci => ci.Claim)
+                .WithMany(c => c.ClaimItems);
+
+            builder.Entity<Category>()
+                .ToTable(nameof(Category))
+                .HasMany(c => c.ClaimItems)
+                .WithOne(ci => ci.Category);
+
+          
+            builder.Entity<Currency>()
+                .ToTable(nameof(Currency))
+                .HasMany(c => c.ClaimItems)
+                .WithOne(ci => ci.Currency)
+                .HasForeignKey(c => c.CurrencyCode);
+
+            builder.Entity<Claim>()
+                .ToTable(nameof(Claim));
         }
+
     }
 }

@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace ExpenseReport.Infrastructure.Migrations
+namespace ExpenseReport.Infrastructure.Migrations.Identity
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20201225073838_initial")]
-    partial class initial
+    [Migration("20210816023909_initialIdentity2")]
+    partial class initialIdentity2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
