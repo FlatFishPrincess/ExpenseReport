@@ -1,8 +1,8 @@
 ﻿using ExpenseReport.Application.Features.Brands.Commands.Create;
 using ExpenseReport.Application.Features.Brands.Queries.GetAllCached;
-using ExpenseReport.Application.Features.Brands.Queries.GetById;
 using ExpenseReport.Domain.Entities.Catalog;
 using AutoMapper;
+using ExpenseReport.Application.Features.Categories.Queries.GetById;
 
 namespace ExpenseReport.Application.Mappings
 {
@@ -11,7 +11,7 @@ namespace ExpenseReport.Application.Mappings
         public BrandProfile()
         {
             CreateMap<CreateBrandCommand, Brand>().ReverseMap();
-            CreateMap<GetBrandByIdResponse, Brand>().ReverseMap();
+            CreateMap<GetCategoryByIdResponse, Brand>().ReverseMap();
             CreateMap<GetAllBrandsCachedResponse, Brand>().ReverseMap();
         }
     }

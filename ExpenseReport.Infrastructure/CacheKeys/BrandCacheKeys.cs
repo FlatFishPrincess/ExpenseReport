@@ -1,13 +1,13 @@
 ﻿namespace ExpenseReport.Infrastructure.CacheKeys
 {
-    public static class BrandCacheKeys
+    public static class CategoryCacheKeys
     {
-        public static string ListKey => "BrandList";
+        public static string ListKey => "CategoryList";
 
-        public static string SelectListKey => "BrandSelectList";
+        public static string SelectListKey => "CategorySelectList";
 
-        public static string GetKey(int brandId) => $"Brand-{brandId}";
+        public static string GetKey(int categoryId) => $"Category-{categoryId}";
 
-        public static string GetDetailsKey(int brandId) => $"BrandDetails-{brandId}";
+        public static string GetDetailsKey(int categoryId) => $"CategoryDetails-{categoryId}";
     }
 }
