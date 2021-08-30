@@ -5,32 +5,52 @@ using MediatR;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System;
+using ExpenseReport.Domain.Entities.Expense;
+using ExpenseReport.Application.Interfaces.Repositories;
+using System.Linq;
+using ExpenseReport.Application.Extensions;
 
 namespace ExpenseReport.Application.Features.Categories.Queries.GetAllCached
 {
-    public class GetAllCategoriesQuery : IRequest<Result<List<GetAllCategoriesResponse>>>
+    public class GetAllCategoriesQuery : IRequest<PaginatedResult<GetAllCategoriesResponse>>
     {
-        public GetAllCategoriesQuery()
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+
+        public GetAllCategoriesQuery(int pageNumber, int pageSize)
         {
+            PageNumber = pageNumber;
+            PageSize = pageSize;
         }
     }
 
-    public class GetAllCategoriesCachedQueryHandler : IRequestHandler<GetAllCategoriesQuery, Result<List<GetAllCategoriesResponse>>>
+    public class GetAllCategoriesQueryHandler : IRequestHandler<GetAllCategoriesQuery, PaginatedResult<GetAllCategoriesResponse>>
     {
-        private readonly ICategoryCacheRepository _productCache;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public GetAllCategoriesCachedQueryHandler(ICategoryCacheRepository productCache, IMapper mapper)
+        public GetAllCategoriesQueryHandler(ICategoryRepository categoryRepository, IMapper mapper)
         {
-            _productCache = productCache;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
 
-        public async Task<Result<List<GetAllCategoriesResponse>>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedResult<GetAllCategoriesResponse>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
         {
-            var categoryList = await _productCache.GetCachedListAsync();
-            var mappedCategories = _mapper.Map<List<GetAllCategoriesResponse>>(categoryList);
-            return Result<List<GetAllCategoriesResponse>>.Success(mappedCategories);
+            Expression<Func<Category, GetAllCategoriesResponse>> expression = expression => new GetAllCategoriesResponse
+            {
+                Id = expression.Id,
+                Name = expression.Name,
+                Code = expression.Code,
+                ClaimItems = expression.ClaimItems
+            };
+
+            var paginatedList = await _categoryRepository.Categories
+                                    .Select(expression)
+                                    .ToPaginatedListAsync(request.PageNumber, request.PageSize);
+            return paginatedList;
         }
     }
 }

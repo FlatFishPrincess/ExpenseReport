@@ -1,0 +1,46 @@
+﻿using ExpenseReport.Application.Interfaces.Repositories;
+using AspNetCoreHero.Results;
+using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace ExpenseReport.Application.Features.Categories.Commands.Update
+{
+    public class UpdateCategoryCommand : IRequest<Result<int>>
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Code { get; set; }
+
+        public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, Result<int>>
+        {
+            private readonly IUnitOfWork _unitOfWork;
+            private readonly ICategoryRepository _categoryRepository;
+
+            public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
+            {
+                _categoryRepository = categoryRepository;
+                _unitOfWork = unitOfWork;
+            }
+
+            public async Task<Result<int>> Handle(UpdateCategoryCommand command, CancellationToken cancellationToken)
+            {
+                var category = await _categoryRepository.GetByIdAsync(command.Id);
+
+                if (category == null)
+                {
+                    return Result<int>.Fail($"Category Not Found.");
+                }
+                else
+                {
+                    category.Name = command.Name ?? category.Name;
+                    category.Code = command.Code ?? category.Code;
+                    // TODO: category claim items?
+                    await _categoryRepository.UpdateAsync(category);
+                    await _unitOfWork.Commit(cancellationToken);
+                    return Result<int>.Success(category.Id);
+                }
+            }
+        }
+    }
+}

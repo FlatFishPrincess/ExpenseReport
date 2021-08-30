@@ -1,9 +1,9 @@
-﻿using ExpenseReport.Application.Interfaces.CacheRepositories;
-using AspNetCoreHero.Results;
+﻿using AspNetCoreHero.Results;
 using AutoMapper;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using ExpenseReport.Application.Interfaces.Repositories;
 
 namespace ExpenseReport.Application.Features.Categories.Queries.GetById
 {
@@ -13,19 +13,19 @@ namespace ExpenseReport.Application.Features.Categories.Queries.GetById
 
         public class GetProductByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, Result<GetCategoryByIdResponse>>
         {
-            private readonly ICategoryCacheRepository _categoryCache;
+            private readonly ICategoryRepository _categoryRepository;
             private readonly IMapper _mapper;
 
-            public GetProductByIdQueryHandler(ICategoryCacheRepository productCache, IMapper mapper)
+            public GetProductByIdQueryHandler(ICategoryRepository categoryRepository, IMapper mapper)
             {
-                _categoryCache = productCache;
+                _categoryRepository = categoryRepository;
                 _mapper = mapper;
             }
 
             public async Task<Result<GetCategoryByIdResponse>> Handle(GetCategoryByIdQuery query, CancellationToken cancellationToken)
             {
-                var product = await _categoryCache.GetByIdAsync(query.Id);
-                var mappedProduct = _mapper.Map<GetCategoryByIdResponse>(product);
+                var category = await _categoryRepository.GetByIdAsync(query.Id);
+                var mappedProduct = _mapper.Map<GetCategoryByIdResponse>(category);
                 return Result<GetCategoryByIdResponse>.Success(mappedProduct);
             }
         }
